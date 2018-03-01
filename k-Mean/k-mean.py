@@ -18,33 +18,43 @@ def plot(k, means, clusters):
     plt.draw()
 
 K = 6
-
 x_means = (np.random.uniform(0, 10, K))
 y_means = (np.random.uniform(0, 10, K))
-
 data = np.ndarray(shape=(0, 2))
+
 for i in range(K):
     for j in range(10):
         x = np.random.normal(x_means[i], 1, 1)[0]
         y = np.random.normal(y_means[i], 1, 1)[0]
         data = np.append(data, [[x,y]], axis=0)
 
-means = data.copy()
-np.random.shuffle(means)
-means = means[:K]
+for random_try in range(3):
+    means = data.copy()
+    np.random.shuffle(means)
+    means = means[:K]
+    old_means = np.ndarray(shape=(0, 2))
 
-clusters = {}
-for i in range(K):
-    clusters[i] = np.ndarray(shape=(0, 2))
+    clusters = {}
 
-for d in data:
-    clustering(clusters, d, means)
+    iteraion = 0
+    max_iteration = 10
+    while len(np.where(means!=old_means)[0]) != 0:
+        old_means = means.copy()
 
-plot(K, means, clusters)
+        for i in range(K):
+            clusters[i] = np.ndarray(shape=(0, 2))
 
-for i in range(K):
-    means[i] = [np.average(clusters[i][:, 0]), np.average(clusters[i][:, 1])]
+        for d in data:
+            clustering(clusters, d, means)
 
-plot(K, means, clusters)
+        for i in range(K):
+            means[i] = [
+                    np.average(clusters[i][:, 0]),
+                    np.average(clusters[i][:, 1])]
 
+        iteraion += 1
+        if iteraion == max_iteration:
+            break
+
+    plot(K, means, clusters)
 plt.show()
